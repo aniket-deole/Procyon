@@ -35,7 +35,7 @@ public class NavigationDrawerFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
+        // Inflate the layout for this fragment\
         return inflater.inflate(R.layout.fragment_navigation_drawer, container, false);
     }
 
@@ -47,10 +47,13 @@ public class NavigationDrawerFragment extends Fragment {
         if (savedInstanceState != null) {
             fromSavedInstanceState = true;
         }
+
+
     }
 
-    public void setUp(int fragment_navigation_drawer, DrawerLayout drawerLayout, Toolbar toolbar) {
+    public void setUp(int fragment_navigation_drawer, DrawerLayout drawerLayout, final Toolbar toolbar) {
         this.drawerLayout = drawerLayout;
+
         actionBarDrawerToggle = new ActionBarDrawerToggle(getActivity(), drawerLayout, toolbar,
                 R.string.drawer_open, R.string.drawer_close) {
 
@@ -69,6 +72,7 @@ public class NavigationDrawerFragment extends Fragment {
                 }
                 getActivity().invalidateOptionsMenu();
             }
+
         };
 
         containerView = getActivity().findViewById(fragment_navigation_drawer);

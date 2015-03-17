@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
 
 public class Intro extends ActionBarActivity {
@@ -22,6 +23,9 @@ public class Intro extends ActionBarActivity {
                 getSupportFragmentManager().findFragmentById(R.id.fragment_navigation_drawer);
         navigationDrawerFragment.setUp(R.id.fragment_navigation_drawer,
                 (DrawerLayout) findViewById(R.id.drawer_layout), toolbar);
+
+        getWindow().getDecorView().setSystemUiVisibility(
+                View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
 
     }
 
