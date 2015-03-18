@@ -49,12 +49,10 @@ public class MainListFragment extends Fragment {
         entries.addOnItemTouchListener(new EntriesOnTouchListener(getActivity(), entries, new ClickListener() {
             @Override
             public void onClick(View view, int position) {
-                Toast.makeText(getActivity(), "onClick " + position, Toast.LENGTH_SHORT).show();
             }
 
             @Override
             public void onLongClick(View view, int position) {
-                Toast.makeText(getActivity(), "onLongClick " + position, Toast.LENGTH_SHORT).show();
             }
         }));
         return layout;
