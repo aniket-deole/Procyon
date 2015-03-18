@@ -7,10 +7,15 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -26,7 +31,8 @@ public class NavigationDrawerFragment extends Fragment {
     private boolean userLearnedDrawer;
     private boolean fromSavedInstanceState;
     private View containerView;
-
+    private RecyclerView drawerList;
+    private NavigationDrawerListAdapter navigationDrawerListAdapter;
     public NavigationDrawerFragment() {
         // Required empty public constructor
     }
@@ -35,8 +41,24 @@ public class NavigationDrawerFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment\
-        return inflater.inflate(R.layout.fragment_navigation_drawer, container, false);
+        // Inflate the layout for this fragment
+        View layout = inflater.inflate(R.layout.fragment_navigation_drawer, container, false);
+        drawerList = (RecyclerView) layout.findViewById(R.id.drawer_list);
+        navigationDrawerListAdapter = new NavigationDrawerListAdapter(getActivity(), getData ());
+        drawerList.setAdapter(navigationDrawerListAdapter);
+        drawerList.setLayoutManager(new LinearLayoutManager(getActivity()));
+        return layout;
+    }
+
+    public static List<NavigationDrawerItem> getData () {
+        List<NavigationDrawerItem> entries = new ArrayList<>();
+        entries.add (new NavigationDrawerItem("Hello"));
+        entries.add (new NavigationDrawerItem("Is"));
+        entries.add (new NavigationDrawerItem("There"));
+        entries.add (new NavigationDrawerItem("Anybody"));
+        entries.add (new NavigationDrawerItem("In"));
+        entries.add (new NavigationDrawerItem("There"));
+        return entries;
     }
 
     @Override

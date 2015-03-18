@@ -25,6 +25,7 @@ public class Intro extends ActionBarActivity {
                 (DrawerLayout) findViewById(R.id.drawer_layout), toolbar);
 
         getWindow().getDecorView().setSystemUiVisibility(
+                View.SYSTEM_UI_FLAG_LAYOUT_STABLE |
                 View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
 
     }
