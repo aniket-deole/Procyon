@@ -2,12 +2,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/accentColor"
-    android:paddingTop="@dimen/appBarPaddingTop"
-    tools:context="com.procyon.procyon.navigationdrawer.NavigationDrawerFragment">
+    tools:context="com.procyon.procyon.mainlist.MainListFragment">
 
     <android.support.v7.widget.RecyclerView
-        android:id="@+id/drawer_list"
+        android:id="@+id/main_list_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 

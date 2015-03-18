@@ -1,4 +1,4 @@
-package com.procyon.procyon;
+package com.procyon.procyon.navigationdrawer;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
@@ -6,6 +6,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
+import com.procyon.procyon.R;
 
 import java.util.Collections;
 import java.util.List;
@@ -15,16 +17,17 @@ import java.util.List;
  */
 public class NavigationDrawerListAdapter extends RecyclerView.Adapter<NavigationDrawerListAdapter.NavigationDrawerRecyclerViewHolder> {
 
-    private LayoutInflater inflator;
+    private LayoutInflater inflater;
     List<NavigationDrawerItem> entries = Collections.emptyList();
+
     public NavigationDrawerListAdapter (Context context, List<NavigationDrawerItem> entries) {
-        inflator = LayoutInflater.from(context);
+        inflater = LayoutInflater.from(context);
         this.entries = entries;
     }
 
     @Override
     public NavigationDrawerRecyclerViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = inflator.inflate(R.layout.navigation_drawer_entry, parent, false);
+        View view = inflater.inflate(R.layout.navigation_drawer_entry, parent, false);
         NavigationDrawerRecyclerViewHolder navigationDrawerRecyclerViewHolder =
                 new NavigationDrawerRecyclerViewHolder (view);
         return navigationDrawerRecyclerViewHolder;
