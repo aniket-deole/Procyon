@@ -1,14 +1,18 @@
 package com.procyon.procyon.mainlist;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.view.GestureDetector;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.procyon.procyon.R;
 
@@ -27,10 +31,10 @@ public class MainListFragment extends Fragment {
     private View containerView;
 
     @Override
-    public void onActivityCreated (Bundle savedInstanceState) {
+    public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         Toolbar toolbar = (Toolbar) getActivity().findViewById(R.id.app_bar);
-        ((ActionBarActivity)getActivity()).setSupportActionBar(toolbar);
+        ((ActionBarActivity) getActivity()).setSupportActionBar(toolbar);
     }
 
     @Override
@@ -42,12 +46,23 @@ public class MainListFragment extends Fragment {
         containerView = getActivity().findViewById(R.id.main_list_view);
         entries.setAdapter(mainListAdapter);
         entries.setLayoutManager(new LinearLayoutManager(getActivity()));
+        entries.addOnItemTouchListener(new EntriesOnTouchListener(getActivity(), entries, new ClickListener() {
+            @Override
+            public void onClick(View view, int position) {
+                Toast.makeText(getActivity(), "onClick " + position, Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onLongClick(View view, int position) {
+                Toast.makeText(getActivity(), "onLongClick " + position, Toast.LENGTH_SHORT).show();
+            }
+        }));
         return layout;
     }
 
     @Override
-    public void onCreate (Bundle savedInstanceState) {
-        super.onCreate (savedInstanceState);
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
         data = new ArrayList<>();
         data.add(new MainListEntry("There"));
         data.add(new MainListEntry("is"));
@@ -84,4 +99,51 @@ public class MainListFragment extends Fragment {
     public List<MainListEntry> getData() {
         return data;
     }
+
+    class EntriesOnTouchListener implements RecyclerView.OnItemTouchListener {
+
+        private GestureDetector gestureDetector;
+        private ClickListener clickListener;
+
+        public EntriesOnTouchListener(Context context, final RecyclerView recyclerView, final ClickListener clickListener) {
+            this.clickListener = clickListener;
+            gestureDetector = new GestureDetector(context, new GestureDetector.SimpleOnGestureListener() {
+                @Override
+                public boolean onSingleTapUp(MotionEvent e) {
+                    return true;
+                }
+
+                @Override
+                public void onLongPress(MotionEvent e) {
+                    super.onLongPress(e);
+                    View childView = recyclerView.findChildViewUnder(e.getX(), e.getY());
+                    if (childView != null && clickListener != null) {
+                        clickListener.onLongClick(childView, recyclerView.getChildPosition(childView));
+                    }
+                }
+
+            });
+        }
+
+        @Override
+        public boolean onInterceptTouchEvent(RecyclerView recyclerView, MotionEvent e) {
+            View childView = recyclerView.findChildViewUnder(e.getX(), e.getY());
+            if (childView != null && clickListener != null && gestureDetector.onTouchEvent(e)) {
+                clickListener.onClick(childView, recyclerView.getChildPosition(childView));
+            }
+            return false;
+        }
+
+        @Override
+        public void onTouchEvent(RecyclerView rv, MotionEvent e) {
+
+        }
+    }
+
+    public static interface ClickListener {
+        public void onClick(View view, int position);
+
+        public void onLongClick(View view, int position);
+    }
+
 }

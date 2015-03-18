@@ -1,12 +1,16 @@
 package com.procyon.procyon.mainlist;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.procyon.procyon.Intro;
 import com.procyon.procyon.R;
 
 import java.util.Collections;
@@ -50,4 +54,6 @@ public class MainListAdapter extends RecyclerView.Adapter<MainListAdapter.MainLi
             label = (TextView) itemView.findViewById(R.id.mle_label);
         }
     }
+
+
 }
