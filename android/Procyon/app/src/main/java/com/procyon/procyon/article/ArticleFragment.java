@@ -13,6 +13,7 @@ import android.view.ViewAnimationUtils;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.animation.AccelerateDecelerateInterpolator;
+import android.view.animation.DecelerateInterpolator;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -46,24 +47,18 @@ public class ArticleFragment extends Fragment {
     }
 
     private ViewTreeObserver.OnGlobalLayoutListener mGlobalLayoutListener = new ViewTreeObserver.OnGlobalLayoutListener() {
-        @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-        public void onGlobalLayout() {
+       @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+       public void onGlobalLayout() {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
                 layout.getViewTreeObserver().removeOnGlobalLayoutListener(this);// previously invisible view
-
-// get the center for the clipping circle
-//                int cx = (layout.getLeft() + layout.getRight()) / 2;
-//                int cy = (layout.getTop() + layout.getBottom()) / 2;
-
-// get the final radius for the clipping circle
                 int finalRadius = Math.max(layout.getWidth(), layout.getHeight());
-
-// create the animator for this view (the start radius is zero)
                 Animator anim =
                         ViewAnimationUtils.createCircularReveal(layout, cx, cy, 0, finalRadius);
+                anim.setInterpolator(new DecelerateInterpolator());
 
-// make the view visible and start the animation
+
                 layout.setVisibility(View.VISIBLE);
+
                 anim.start();
             } else {
                 layout.getViewTreeObserver().removeGlobalOnLayoutListener(this);

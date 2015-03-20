@@ -75,7 +75,7 @@ public class NavigationDrawerFragment extends Fragment {
 
     }
 
-    public void setUp(int fragment_navigation_drawer, DrawerLayout drawerLayout, final Toolbar toolbar) {
+    public ActionBarDrawerToggle setUp(int fragment_navigation_drawer, DrawerLayout drawerLayout, final Toolbar toolbar) {
         this.drawerLayout = drawerLayout;
 
         actionBarDrawerToggle = new ActionBarDrawerToggle(getActivity(), drawerLayout, toolbar,
@@ -115,6 +115,8 @@ public class NavigationDrawerFragment extends Fragment {
                               }
                           }
         );
+
+        return  actionBarDrawerToggle;
     }
 
     public static void saveToSharedPreferences(Context context, String preferenceName, String preferenceValue) {

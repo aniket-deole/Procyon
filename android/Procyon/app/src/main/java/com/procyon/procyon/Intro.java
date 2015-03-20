@@ -6,6 +6,7 @@ import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -18,16 +19,23 @@ import com.procyon.procyon.navigationdrawer.NavigationDrawerFragment;
 
 public class Intro extends ActionBarActivity implements IFC {
 
+    DrawerLayout drawerLayout;
+    ActionBarDrawerToggle drawerToggle;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.intro);
 
+        drawerLayout =  (DrawerLayout) findViewById(R.id.drawer_layout);
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.app_bar);
+        setSupportActionBar(toolbar);
         NavigationDrawerFragment navigationDrawerFragment = (NavigationDrawerFragment)
                 getSupportFragmentManager().findFragmentById(R.id.fragment_navigation_drawer);
-        navigationDrawerFragment.setUp(R.id.fragment_navigation_drawer,
-                (DrawerLayout) findViewById(R.id.drawer_layout), toolbar);
+
+        drawerToggle = navigationDrawerFragment.setUp(R.id.fragment_navigation_drawer, drawerLayout
+               , toolbar);
 
         MainListFragment mainListFragment = new MainListFragment();
 
@@ -40,6 +48,9 @@ public class Intro extends ActionBarActivity implements IFC {
                 View.SYSTEM_UI_FLAG_LAYOUT_STABLE |
                         View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
 
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setHomeButtonEnabled(true);
+
     }
 
 
@@ -50,30 +61,14 @@ public class Intro extends ActionBarActivity implements IFC {
         return true;
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-
     public void sendMessage(String data, int cx, int cy) {
         FragmentManager fragmentManager = getFragmentManager();
         android.app.FragmentTransaction transaction = fragmentManager.beginTransaction();
         Fragment fragment = fragmentManager.findFragmentByTag("mainListFragment");
-        transaction.addToBackStack("mainListFragment");
 
+        transaction.addToBackStack(null);
 
         ArticleFragment articleFragment = new ArticleFragment();
-        // previously invisible view
         transaction.hide(fragment);
         transaction.add(R.id.intro_linear_layout, articleFragment);
         transaction.commit();
@@ -81,4 +76,17 @@ public class Intro extends ActionBarActivity implements IFC {
         articleFragment.setTextView(data, cx, cy);
         return;
     }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Pass the event to ActionBarDrawerToggle, if it returns
+        // true, then it has handled the app icon touch event
+        if (drawerToggle.onOptionsItemSelected(item)) {
+            return true;
+        }
+        // Handle your other action bar items...
+
+        return super.onOptionsItemSelected(item);
+    }
+
 }
