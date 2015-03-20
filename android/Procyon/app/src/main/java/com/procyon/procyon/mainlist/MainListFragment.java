@@ -1,8 +1,8 @@
 package com.procyon.procyon.mainlist;
 
+import android.app.Fragment;
 import android.content.Context;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -14,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.procyon.procyon.IFC;
 import com.procyon.procyon.R;
 
 import java.util.ArrayList;
@@ -30,11 +31,14 @@ public class MainListFragment extends Fragment {
     private List<MainListEntry> data = Collections.emptyList();
     private View containerView;
 
+    private IFC ifc;
+
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         Toolbar toolbar = (Toolbar) getActivity().findViewById(R.id.app_bar);
         ((ActionBarActivity) getActivity()).setSupportActionBar(toolbar);
+        ifc = (IFC) getActivity();
     }
 
     @Override
@@ -48,7 +52,9 @@ public class MainListFragment extends Fragment {
         entries.setLayoutManager(new LinearLayoutManager(getActivity()));
         entries.addOnItemTouchListener(new EntriesOnTouchListener(getActivity(), entries, new ClickListener() {
             @Override
-            public void onClick(View view, int position) {
+            public void onClick(View view, int position, int cx, int cy) {
+                ifc.sendMessage("The Text at " + position + " is " +
+                        data.get(position).value, cx, cy);
             }
 
             @Override
@@ -127,7 +133,8 @@ public class MainListFragment extends Fragment {
         public boolean onInterceptTouchEvent(RecyclerView recyclerView, MotionEvent e) {
             View childView = recyclerView.findChildViewUnder(e.getX(), e.getY());
             if (childView != null && clickListener != null && gestureDetector.onTouchEvent(e)) {
-                clickListener.onClick(childView, recyclerView.getChildPosition(childView));
+                clickListener.onClick(childView, recyclerView.getChildPosition(childView), Math.round (e.getX()),
+                        Math.round (e.getY()));
             }
             return false;
         }
@@ -139,7 +146,7 @@ public class MainListFragment extends Fragment {
     }
 
     public static interface ClickListener {
-        public void onClick(View view, int position);
+        public void onClick(View view, int position, int cx, int cy);
 
         public void onLongClick(View view, int position);
     }

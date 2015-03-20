@@ -10,19 +10,12 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
+        android:id="@+id/intro_linear_layout"
         tools:context=".Intro">
 
         <include
             layout="@layout/app_bar"
             android:id="@+id/app_bar" />
-
-        <fragment android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_below="@id/app_bar"
-            android:layout="@layout/fragment_main_list"
-            android:name="com.procyon.procyon.mainlist.MainListFragment"
-            tools:layout="@layout/fragment_main_list"
-            android:id="@+id/fragment_main_list" />
 
     </LinearLayout>
     <fragment android:layout_width="280dp"
