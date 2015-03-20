@@ -66,12 +66,10 @@ public class Intro extends ActionBarActivity implements IFC {
         android.app.FragmentTransaction transaction = fragmentManager.beginTransaction();
         Fragment fragment = fragmentManager.findFragmentByTag("mainListFragment");
 
-        transaction.addToBackStack(null);
-
         ArticleFragment articleFragment = new ArticleFragment();
-        transaction.hide(fragment);
-        transaction.add(R.id.intro_linear_layout, articleFragment);
-        transaction.commit();
+        transaction.addToBackStack("mainListFragment")
+                .replace(R.id.intro_linear_layout, articleFragment)
+                .commit();
 
         articleFragment.setTextView(data, cx, cy);
         return;

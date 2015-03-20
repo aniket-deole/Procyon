@@ -55,8 +55,7 @@ public class ArticleFragment extends Fragment {
                 Animator anim =
                         ViewAnimationUtils.createCircularReveal(layout, cx, cy, 0, finalRadius);
                 anim.setInterpolator(new DecelerateInterpolator());
-
-
+                
                 layout.setVisibility(View.VISIBLE);
 
                 anim.start();
