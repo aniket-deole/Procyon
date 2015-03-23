@@ -1,20 +1,20 @@
 package com.paleBlueDot.feedMe.processes;
 
+import java.io.BufferedReader;
+import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 
 import javax.ws.rs.core.MediaType;
 
-import com.paleBlueDot.feedMe.Beans.AuthReqDataBean;
-import com.paleBlueDot.feedMe.Beans.AuthResDataBean;
 import com.paleBlueDot.feedMe.Helper.GateRequestGenerator;
 import com.paleBlueDot.feedMe.Helper.PostRequestGenerator;
+import com.paleBlueDot.feedMe.VO.AuthenticationVO;
 
 public class AuthorizationProcess {
 
 	private final String webServiceURI = "http://sandbox.feedly.com/v3/auth";
-	private AuthReqDataBean authRequest = new AuthReqDataBean();
-	private AuthResDataBean authResponse = new AuthResDataBean();
+	private AuthenticationVO authRequest = new AuthenticationVO();
 
 	public AuthorizationProcess() {
 	}
@@ -74,7 +74,7 @@ public class AuthorizationProcess {
 	}
 
 	// get url parameters for generating tokens
-	private String getTokenUrlparams(AuthReqDataBean authRequest) {
+	private String getTokenUrlparams(AuthenticationVO authRequest) {
 		try {
 			String urlParameters = "code="
 					+ URLEncoder.encode(authRequest.getCode(), "UTF-8")
