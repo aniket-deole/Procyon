@@ -18,6 +18,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.procyon.procyon.R;
+import com.procyon.procyon.animation.BakedBezierInterpolator;
 
 /**
  * Created by aniket on 3/19/15.
@@ -54,7 +55,7 @@ public class ArticleFragment extends Fragment {
                 int finalRadius = Math.max(layout.getWidth(), layout.getHeight());
                 Animator anim =
                         ViewAnimationUtils.createCircularReveal(layout, cx, cy, 0, finalRadius);
-                anim.setInterpolator(new DecelerateInterpolator());
+                anim.setInterpolator(new AccelerateDecelerateInterpolator());
                 
                 layout.setVisibility(View.VISIBLE);
 

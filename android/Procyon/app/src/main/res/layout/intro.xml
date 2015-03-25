@@ -17,8 +17,21 @@
             layout="@layout/app_bar"
             android:id="@+id/app_bar" />
 
+        <com.procyon.procyon.mainlist.SlidingTabLayout
+            android:id="@+id/sliding_tabs"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+        <android.support.v4.view.ViewPager
+            android:id="@+id/view_pager"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"/>
+
     </LinearLayout>
-    <fragment android:layout_width="280dp"
+
+    <fragment
+        android:layout_width="280dp"
         android:layout_height="match_parent"
         android:layout_gravity="start"
         app:layout="@layout/fragment_navigation_drawer"
