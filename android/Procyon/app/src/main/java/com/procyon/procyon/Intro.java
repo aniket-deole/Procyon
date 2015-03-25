@@ -2,7 +2,6 @@ package com.procyon.procyon;
 
 import android.app.Fragment;
 import android.app.FragmentManager;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v13.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
@@ -54,11 +53,12 @@ public class Intro extends ActionBarActivity implements IFC {
         viewPager.setAdapter(new PageAdapter(getFragmentManager()));
 
         slidingTabLayout = (SlidingTabLayout) findViewById(R.id.sliding_tabs);
+        slidingTabLayout.setCustomTabView(R.layout.sliding_tab_layout, R.id.sliding_tab_text);
         slidingTabLayout.setDistributeEvenly(true);
         slidingTabLayout.setCustomTabColorizer(new SlidingTabLayout.TabColorizer() {
             @Override
             public int getIndicatorColor(int position) {
-                return Color.RED;
+                return getResources().getColor(R.color.accentColor);
             }
         });
         slidingTabLayout.setViewPager(viewPager);
