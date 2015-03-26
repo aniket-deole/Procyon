@@ -4,7 +4,6 @@
     android:layout_height="wrap_content"
     android:background="@color/primaryColor"
     android:theme="@style/AppBarTheme"
-    android:paddingTop="@dimen/appBarPaddingTop"
     android:popupTheme="@style/ThemeOverlay.AppCompat.Light">
 
 
