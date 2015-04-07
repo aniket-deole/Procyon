@@ -2,7 +2,11 @@ package com.procyon.procyon.mainlist;
 
 import android.app.Fragment;
 import android.content.Context;
+import android.graphics.drawable.NinePatchDrawable;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Parcelable;
+import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -14,7 +18,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.h6ah4i.android.widget.advrecyclerview.animator.GeneralItemAnimator;
+import com.h6ah4i.android.widget.advrecyclerview.animator.RefactoredDefaultItemAnimator;
+import com.h6ah4i.android.widget.advrecyclerview.decoration.ItemShadowDecorator;
+import com.h6ah4i.android.widget.advrecyclerview.decoration.SimpleListDividerDecorator;
+import com.h6ah4i.android.widget.advrecyclerview.expandable.RecyclerViewExpandableItemManager;
 import com.procyon.procyon.IFC;
+import com.procyon.procyon.Intro;
 import com.procyon.procyon.R;
 
 import java.util.ArrayList;
@@ -25,6 +35,7 @@ import java.util.List;
  * Created by aniket on 3/18/15.
  */
 public class MainListFragment extends Fragment {
+    private static final String SAVED_STATE_EXPANDABLE_ITEM_MANAGER = "RecyclerViewExpandableItemManager";
 
     private RecyclerView entries;
     private MainListAdapter mainListAdapter;
@@ -33,44 +44,68 @@ public class MainListFragment extends Fragment {
 
     private IFC ifc;
 
+
+    private RecyclerView mRecyclerView;
+    private RecyclerView.LayoutManager mLayoutManager;
+    private RecyclerView.Adapter mAdapter;
+    private RecyclerView.Adapter mWrappedAdapter;
+    private RecyclerViewExpandableItemManager mRecyclerViewExpandableItemManager;
+
+    public MainListFragment() {
+        super();
+    }
+
+    @Override
+    public View onCreateView (LayoutInflater inflater, @Nullable ViewGroup container,
+                         @Nullable Bundle savedInstanceState) {
+        return inflater.inflate(R.layout.fragment_main_list, container, false);
+    }
+
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        mRecyclerView = (RecyclerView) getView ().findViewById(R.id.main_list_view);
+        mLayoutManager = new LinearLayoutManager(getActivity());
+
+        final Parcelable eimSavedState = (savedInstanceState != null) ? savedInstanceState.getParcelable(SAVED_STATE_EXPANDABLE_ITEM_MANAGER) : null;
+
+        mRecyclerViewExpandableItemManager = new RecyclerViewExpandableItemManager(eimSavedState);
+
+        // adapter
+        getDataProvider ();
+
+        final MainListAdapter mainListAdapter = new MainListAdapter(getDataProvider());
+
+        mAdapter = mainListAdapter;
+
+        mWrappedAdapter = mRecyclerViewExpandableItemManager.createWrappedAdapter(mainListAdapter);       // wrap for expanding
+
+        final GeneralItemAnimator animator = new RefactoredDefaultItemAnimator();
+
+        mRecyclerView.setLayoutManager(mLayoutManager);
+        mRecyclerView.setAdapter(mWrappedAdapter);  // requires *wrapped* adapter
+        mRecyclerView.setItemAnimator(animator);
+        mRecyclerView.setHasFixedSize(false);
+
+        // additional decorations
+        //noinspection StatementWithEmptyBody
+//        if (supportsViewElevation()) {
+//            // Lollipop or later has native drop shadow feature. ItemShadowDecorator is not required.
+//        } else {
+//            mRecyclerView.addItemDecoration(new ItemShadowDecorator((NinePatchDrawable) getResources().getDrawable(R.drawable.material_shadow_z1)));
+//        }
+//        mRecyclerView.addItemDecoration(new SimpleListDividerDecorator(getResources().getDrawable(R.drawable.list_divider), true));
+
+        mRecyclerViewExpandableItemManager.attachRecyclerView(mRecyclerView);
+    }
+
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         Toolbar toolbar = (Toolbar) getActivity().findViewById(R.id.app_bar);
         ((ActionBarActivity) getActivity()).setSupportActionBar(toolbar);
         ifc = (IFC) getActivity();
-    }
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        View layout = inflater.inflate(R.layout.fragment_main_list, container, false);
-        entries = (RecyclerView) layout.findViewById(R.id.main_list_view);
-        mainListAdapter = new MainListAdapter(getActivity(), getData());
-        containerView = getActivity().findViewById(R.id.main_list_view);
-        entries.setAdapter(mainListAdapter);
-        entries.setLayoutManager(new LinearLayoutManager(getActivity()));
-        entries.addOnItemTouchListener(new EntriesOnTouchListener(getActivity(), entries, new ClickListener() {
-            @Override
-            public void onClick(View view, int position, int cx, int cy) {
-
-                String data = "orem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.\n" +
-                        "\n" +
-                        "It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using 'Content here, content here', making it look like readable English. Many desktop publishing packages and web page editors now use Lorem Ipsum as their default model text, and a search for 'lorem ipsum' will uncover many web sites still in their infancy. Various versions have evolved over the years, sometimes by accident, sometimes on purpose (injected humour and the like).\n" +
-                        "\n" +
-                        " \n" +
-                        "Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old. Richard McClintock, a Latin professor at Hampden-Sydney College in Virginia, looked up one of the more obscure Latin words, consectetur, from a Lorem Ipsum passage, and going through the cites of the word in classical literature, discovered the undoubtable source. Lorem Ipsum comes from sections 1.10.32 and 1.10.33 of \"de Finibus Bonorum et Malorum\" (The Extremes of Good and Evil) by Cicero, written in 45 BC. This book is a treatise on the theory of ethics, very popular during the Renaissance. The first line of Lorem Ipsum, \"Lorem ipsum dolor sit amet..\", comes from a line in section 1.10.32.\n" +
-                        "\n" +
-                        "The standard chunk of Lorem Ipsum used since the 1500s is reproduced below for those interested. Sections 1.10.32 and 1.10.33 from \"de Finibus Bonorum et Malorum\" by Cicero are also reproduced in their exact original form, accompanied by English versions from the 1914 translation by H. Rackham.";
-                ifc.sendMessage(data, cx, cy);
-
-            }
-
-            @Override
-            public void onLongClick(View view, int position) {
-            }
-        }));
-        return layout;
     }
 
     @Override
@@ -142,8 +177,8 @@ public class MainListFragment extends Fragment {
         public boolean onInterceptTouchEvent(RecyclerView recyclerView, MotionEvent e) {
             View childView = recyclerView.findChildViewUnder(e.getX(), e.getY());
             if (childView != null && clickListener != null && gestureDetector.onTouchEvent(e)) {
-                clickListener.onClick(childView, recyclerView.getChildPosition(childView), Math.round (e.getX()),
-                        Math.round (e.getY()));
+                clickListener.onClick(childView, recyclerView.getChildPosition(childView), Math.round(e.getX()),
+                        Math.round(e.getY()));
             }
             return false;
         }
@@ -158,6 +193,14 @@ public class MainListFragment extends Fragment {
         public void onClick(View view, int position, int cx, int cy);
 
         public void onLongClick(View view, int position);
+    }
+
+    public AbstractExpandableDataProvider getDataProvider() {
+        return ((Intro) getActivity()).getDataProvider();
+    }
+
+    private boolean supportsViewElevation() {
+        return (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP);
     }
 
 }

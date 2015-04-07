@@ -10,18 +10,24 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
+import android.util.SparseArray;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
 import com.mikepenz.materialdrawer.Drawer;
 import com.procyon.procyon.article.ArticleFragment;
+import com.procyon.procyon.mainlist.AbstractExpandableDataProvider;
+import com.procyon.procyon.mainlist.ExampleExpandableDataProviderFragment;
 import com.procyon.procyon.mainlist.MainListFragment;
 import com.procyon.procyon.mainlist.SlidingTabLayout;
 import com.procyon.procyon.navigationdrawer.NavigationDrawerFragment;
 
 
 public class Intro extends ActionBarActivity implements IFC {
+
+    private static String FRAGMENT_TAG_DATA_PROVIDER = "main_list_fragment";
+    private static final String FRAGMENT_TAG_ARTICLE = "article_fragment";
 
     private ViewPager viewPager;
     private SlidingTabLayout slidingTabLayout;
@@ -37,13 +43,13 @@ public class Intro extends ActionBarActivity implements IFC {
         setSupportActionBar(toolbar);
 
 
-        drawerResult = new Drawer ().withActivity(this)
+        drawerResult = new Drawer().withActivity(this)
                 .withActionBarDrawerToggle(true)
                 .withActionBarDrawerToggleAnimated(true)
                 .withStatusBarColor(Color.TRANSPARENT)
                 .withToolbar(toolbar)
                 .withTranslucentStatusBar(true)
-                .build ();
+                .build();
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(false);
         drawerResult.getActionBarDrawerToggle().setDrawerIndicatorEnabled(true);
@@ -53,7 +59,7 @@ public class Intro extends ActionBarActivity implements IFC {
                         View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
 
         viewPager = (ViewPager) findViewById(R.id.view_pager);
-        viewPager.setAdapter(new PageAdapter(getFragmentManager()));
+        viewPager.setAdapter(new PageAdapter(getFragmentManager(), viewPager));
 
         slidingTabLayout = (SlidingTabLayout) findViewById(R.id.sliding_tabs);
         slidingTabLayout.setCustomTabView(R.layout.sliding_tab_layout, R.id.sliding_tab_text);
@@ -66,6 +72,9 @@ public class Intro extends ActionBarActivity implements IFC {
         });
         slidingTabLayout.setViewPager(viewPager);
 
+        getFragmentManager().beginTransaction()
+                .add(new ExampleExpandableDataProviderFragment(), FRAGMENT_TAG_DATA_PROVIDER)
+                .commit();
     }
 
 
@@ -79,10 +88,10 @@ public class Intro extends ActionBarActivity implements IFC {
     public void sendMessage(String data, int cx, int cy) {
         FragmentManager fragmentManager = getFragmentManager();
         android.app.FragmentTransaction transaction = fragmentManager.beginTransaction();
-        Fragment fragment = fragmentManager.findFragmentByTag("mainListFragment");
+        Fragment fragment = fragmentManager.findFragmentByTag(FRAGMENT_TAG_ARTICLE);
 
         ArticleFragment articleFragment = new ArticleFragment();
-        transaction.addToBackStack("mainListFragment")
+        transaction.addToBackStack(FRAGMENT_TAG_DATA_PROVIDER)
                 .replace(R.id.intro_linear_layout, articleFragment)
                 .commit();
 
@@ -104,33 +113,42 @@ public class Intro extends ActionBarActivity implements IFC {
 
     class PageAdapter extends FragmentPagerAdapter {
 
-        public PageAdapter(FragmentManager fm) {
+        private ViewPager vp;
+        public int fragId;
+        SparseArray<Fragment> registeredFragments = new SparseArray<Fragment>();
+        public PageAdapter(FragmentManager fm, ViewPager vp) {
             super(fm);
+            this.vp = vp;
         }
 
         @Override
         public Fragment getItem(int position) {
-            Fragment mainListFragment = new MainListFragment();
+            Fragment mainListFragment = registeredFragments.get(position);
+            if (mainListFragment == null) {
+                mainListFragment = new MainListFragment();
+                fragId = mainListFragment.getId();
+                registeredFragments.put(position, mainListFragment);
+            }
+
             return mainListFragment;
         }
 
         @Override
         public int getCount() {
-            return 4;
+            return 1;
         }
 
         @Override
         public CharSequence getPageTitle(int position) {
-            if (position == 0)
                 return "CATEGORIES";
-            else if (position == 1)
-                return "UNREAD";
-            else if (position == 2)
-                return "READ";
-            else
-                return "STARRED";
-        }
 
+        }
+    }
+
+    public AbstractExpandableDataProvider getDataProvider() {
+        PageAdapter adapter = (PageAdapter) viewPager.getAdapter();
+        final Fragment fragment = getFragmentManager().findFragmentByTag(FRAGMENT_TAG_DATA_PROVIDER);
+        return ((ExampleExpandableDataProviderFragment) fragment).getDataProvider();
     }
 
 }
